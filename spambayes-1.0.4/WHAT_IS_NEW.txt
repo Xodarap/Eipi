@@ -1,0 +1,120 @@
+This file covers the major changes between each release.  For more details,
+the reader is referred to the changelog (CHANGELOG.TXT in the main directory
+of the archive), or for extreme details, to the check-ins archive (see
+<http://mail.python.org/pipermail/spambayes-checkins>)
+                                                                   
+This is a bugfix release, so there are no new features, and you do not need
+to do anything to migrate to the new release (other than install it).  There
+are no incompatible changes.
+
+Barring any unexpected problems with this release or the forthcoming 1.1
+release, it is likely that this will be the last release in the 1.0.x series.
+
+New in 1.0.4
+============
+
+1.0.4 has three changes, all as a response to the same problem with 1.0.3.
+1.0.3 was built with Python 2.4, which, while offering many advantages,
+also introduced a problem when failing to connect to a POP3 server with
+sb_server.py.  Basically, if your mail client tried to connect to the
+POP3 server and the connect failed (but the DNS lookup succeeded) then
+a never-ending stream of warnings would be written to your log.  This
+both consumes all available disk space and all available processing time.
+
+This release does not address any issues with sb_imapfilter, the Outlook
+plug-in, or any other SpamBayes application except sb_server.  Users of
+those applications are welcome to continue using 1.0.3.
+
+The three changes are:
+
+  o 1.0.4 is built with Python 2.3, as all previous releases were.  If
+    there are any future 1.0.x releases, they will also be built with
+    Python 2.3.  1.1.x will be built with Python 2.4.
+
+  o Unless you have set the [globals] verbose option to True, sb_server
+    will only report unique connection errors once per hour.  In other
+    words, if you have three different servers proxied, and they all
+    fail, you will get only three errors logged per hour, no matter how
+    many times the connection fails.
+
+  o The connection to the server will now properly fail if the connection
+    cannot be established, and this error will be reported only once,
+    rather than the partial success and continual warnings experienced
+    with 1.0.3.
+
+
+Deprecated Options
+==================
+
+The following options are still deprecated and will be removed in the 1.1
+release:
+  o [Tokenizer] generate_time_buckets
+  o [Tokenizer] extract_dow
+  o [Classifier] experimental_ham_spam_imbalance_adjustment
+
+We recommend that you cease using these options if you still are.  If you
+have any questions about the deprecated options, please email
+spambayes@python.org and we will try and answer them.
+
+
+Experimental Options
+====================
+
+We would like to remind users about our set of experimental options.  These
+are options which we believe may be of benefit to users, but have not been
+tested throughly enough to warrent full inclusion.  We would greatly
+appreciate feedback from users willing to try these options out as to their
+perceived benefit.  Both source code and binary users (including Outlook)
+can try these options out.
+
+To enable an experimental option, sb_server and sb_imapfilter users should
+click on the "Experimental Configuration" button on the main configuration
+page, and select the option(s) they wish to try.
+
+To enable an experimental option, Outlook plug-in users should open their
+"Data Directory" (via SpamBayes->SpamBayes Manager->Advanced->Show Data Folder)
+and open the "default_bayes_customize.ini" file in there (create one with
+Notepad if there isn't already one).  In this file, add the options that
+you wish to try - for example, to enable searching for "Habeas" headers,
+add a line with "Tokenizer" and, below that, a line with
+"x-search_for_habeas_headers:True".
+
+More information about the experimental options and how to enable them
+can be found at:
+  http://spambayes.org/experimental.html
+
+If you have any queries about the experimental options, please email
+spambayes@python.org and we will try and answer them.
+                                                          
+Experimental options that are currently available include:
+  o [Tokenizer] x-search_for_habeas_headers
+  o [Tokenizer] x-reduce_habeas_headers
+    These generate tokens based on the Habeas headers (see
+    <http://habeas.com> for more details).
+  
+  o [Classifier] x-use_bigrams
+    By default, SpamBayes uses unigrams tokens that are basically
+    single words (split on whitespace).  This option enables both unigrams
+    and bigrams (pairs of words), but uses a 'tiling' scheme, where only
+    the set of unigrams and bigrams that have the strongest effect on
+    the message are used.  Note that this option will no longer be
+    experimental (although still off by default) with 1.1 - we recommend
+    that you try it out if you want higher accuracy.
+
+  o [URLRetriever] x-slurp_urls
+  o [URLRetriever] x-cache_expiry_days
+  o [URLRetriever] x-cache_directory
+  o [URLRetriever] x-only_slurp_base
+  o [URLRetriever] x-web_prefix
+    If these are used, if a message is scored as 'unsure', and could use
+    more tokens in its classification, then text from any URLs in the
+    message is retrieved and used, if it makes a difference to the
+    classification.
+
+  o [Tokenizer] x-pick_apart_urls
+    Pick out some semantic bits from URLs.
+
+  o [Tokenizer] x-fancy_url_recognition
+    Recognize 'abbreviated' URLs of the form www.xyz.com or ftp.xyz.com as
+    http://www.xyz.com and ftp://ftp.xyz.com, respectively.  This gets rid
+    of some fairly common "skip:w NNN" tokens.

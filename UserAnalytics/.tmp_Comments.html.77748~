@@ -1,0 +1,108 @@
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js" type="text/javascript"></script>
+	<script src="/static/js/jquery-ui-1.8.6.custom.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="/static/css/redmond/jquery-ui-1.8.6.custom.css" type="text/css" media="screen"/>
+	<script type="text/javascript" src="/static/js/highcharts.js"></script>
+
+	<style type="text/css">
+	</style>
+</head>
+<body>
+
+<div id="container"></div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	eipi.PageObject = new eipi.Stories();
+	eipi.PageObject.init();
+})	
+eipi ={};
+eipi.Stories = function (){	
+	this.init = function(){
+		var self = this;
+		self.hashedData = {};
+		$.getJSON('commentdata', function(data){
+			self.data = data;
+			var seriesData = [];
+			for(var cmtNum in data){
+				var comment = data[cmtNum];
+				var textLength = comment.Text.length;
+				seriesData.push({ 'x' : textLength, 
+							      'y' : comment.Votes,
+								  'title': comment.Text});
+			}
+			self.chart = new Highcharts.Chart({
+					chart: {
+						renderTo: 'container', 
+						defaultSeriesType: 'scatter',
+						zoomType: 'xy'
+					},
+					title: {
+						text: 'Comments'
+					},
+					xAxis: {
+						title: {
+							enabled: true,
+							text: 'Length'
+						},
+						startOnTick: true,
+						endOnTick: true,
+						showLastLabel: true 
+					},
+					yAxis: {
+						title: {
+							enabled: true,
+							text: 'Votes'
+						}
+					},
+					tooltip: {
+						formatter: function() {
+							// TODO: real sanitization, probably server-side
+							var title = this.point.title;
+							var cleanedTitle = title.replace(/&gt;/g, '>').replace(/&lt;/g,'<')
+							return $(cleanedTitle).text().slice(0,75);
+						}
+					},
+					legend: {
+						layout: 'vertical',
+						align: 'left',
+						verticalAlign: 'top',
+						x: 10,
+						//y: 70,
+						floating: true,
+						backgroundColor: '#FFFFFF',
+						borderWidth: 1,
+						enabled: false
+					},
+					plotOptions: {
+						scatter: {
+							marker: {
+								radius: 5,
+								states: {
+									hover: {
+										enabled: true,
+										lineColor: 'rgb(100,100,100)'
+									}
+								}
+							},
+							states: {
+								hover: {
+									marker: {
+										enabled: false
+									}
+								}
+							}
+						}
+					},
+					series: [{
+						'name': 'Votes By Length',
+						'data': seriesData
+					}]
+				});
+		});
+	};
+}
+</script>
+</body>
+</html>

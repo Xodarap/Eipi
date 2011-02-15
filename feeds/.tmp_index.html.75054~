@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <meta name="generator" content="HTML Tidy, see www.w3.org">
+<script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"
+type="text/javascript">
+</script>
+<script src="../static/js/jquery-ui-1.8.6.custom.min.js" type=
+"text/javascript">
+</script>
+<script src="../static/js/grid.locale-en.js" type=
+"text/javascript">
+</script>
+<script src="../static/js/jquery.jqGrid.min.js" type=
+"text/javascript">
+</script>
+<script src="../static/js/ui.checkbox.js" type="text/javascript">
+</script>
+        <link rel="stylesheet" href="../static/css/ui.jqgrid.css"
+        type="text/css" media="screen">
+        <link rel="stylesheet" href=
+        "../static/css/redmond/jquery-ui-1.8.6.custom.css" type=
+        "text/css" media="screen">
+        <link rel="stylesheet" href="../static/css/ui.checkbox.css"
+        type="text/css" media="screen">
+<style type="text/css">
+        a {
+            text-decoration: none;
+        }
+        td input.turnIntoCheckbox {
+            display:block;
+            margin-left:auto;
+            margin-right:auto;
+            width:14px;
+        }
+        /* Make text wrap */
+        .ui-jqgrid tr.jqgrow td {
+            white-space: normal !important;
+        }
+    #loading_display_holder{    
+	    position: fixed;    
+	    display: none;
+	    z-index: 400;    
+	    width: 100%;    
+	    top: 0px;    
+	    right: 0px;    
+    }
+    
+    
+    #loading_display{    
+	    position: relative;    
+	    margin: 0 auto 0 auto;    
+	    padding: 5px 0px;    
+	    width: 150px;    
+	    color: #000000;    
+	    text-align: center;    
+	    background-color: #FFFACD;    
+	    border: 1px solid #FFEC8B;    
+	    -moz-border-radius-bottomright: 5px;    
+	    -moz-border-radius-bottomleft: 5px;    
+	    -webkit-border-bottom-left-radius: 5px;    
+	    -webkit-border-bottom-right-radius: 5px;    
+    }
+    
+	#loading_display .loadingText {
+		margin-left:10px;
+	}
+</style>
+
+        <title></title>
+    </head>
+
+    <body>
+        <div id="loading_display_holder">
+            <div id="loading_display">
+            	<img src="/static/css/images/ajax-loader.gif" />
+                <span class="loadingText">Loading...</span>
+            </div>
+        </div>
+
+        <table id="storyHolder">
+        </table>
+
+        <div id="pager">
+        </div>
+        <br>
+        <a href="javascript:;" onclick="eipi.update()" id=
+        "updateButton">Update</a> 
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#storyHolder").jqGrid({ 
+        url:'storyList', 
+        datatype: "json", 
+        height: 500, 
+        colNames:['Date', 'Category', 'Title', 'Valid', 'Score'], 
+        colModel:[ 
+                    {name:'Date',index:'Date', width:40, sorttype:"date"}, 
+                    {name:'Category', index:'Category', width:90, sortable:true},
+                    {name:'Title',index:'Title', width:700}, 
+                    {name:'Valid',index:'Valid', width:50, sortable:true},
+					{name:'Score', index:'Score', width:50, sortable:true} 
+                ], 
+        multiselect: false, 
+        caption: "Stories",
+        pager:'#pager',
+        gridComplete: function(){
+            //$('input.turnIntoCheckbox').checkbox()
+        },
+        loadonce: true//,  
+    }); 
+    $('#updateButton').button();
+    //$('input.turnIntoCheckbox').checkbox();
+})  
+
+eipi ={};
+eipi.toggleValid = function(id){
+    $.getJSON('/' + id +'/vote', function(data){
+        //var old = $('#storyHolder').jqGrid('getRowData', id);
+        //old['Valid'] = $(old['Valid']).attr('checked', data.valid ? 'checked' : '').html();
+        //$('#storyHolder').jqGrid('setRowData', id, old);      
+    }); 
+}   
+eipi.update = function(){
+    $.post('update', function(data){
+        //$("#storyHolder").jqGrid().trigger("reloadGrid");
+        location.reload(); 
+    });
+}
+$(document).ajaxStart(function() {
+$('#loading_display_holder').slideDown("fast");
+});
+
+
+$(document).ajaxStop(function() {
+$('#loading_display_holder').slideUp("fast");
+});
+</script>
+    </body>
+</html>
+

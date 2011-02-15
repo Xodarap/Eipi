@@ -1,0 +1,144 @@
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js" type="text/javascript"></script>
+	<script src="/static/js/jquery-ui-1.8.6.custom.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="/static/css/redmond/jquery-ui-1.8.6.custom.css" type="text/css" media="screen"/>
+	<script type="text/javascript" src="/static/js/highcharts.js"></script>
+
+	<style type="text/css">
+	</style>
+</head>
+<body>
+
+<div id="container"></div>
+<a href="javascript:;" onclick="eipi.update()" id="updateButton">Update</a>
+<script type="text/javascript">
+$(document).ready(function(){
+	eipi.PageObject = new eipi.Stories();
+	eipi.PageObject.init();
+})	
+Date.prototype.getDOY = function() {
+	var onejan = new Date(this.getFullYear(),0,1);
+	return Math.ceil((this - onejan) / 86400000);
+};
+
+eipi ={};
+eipi.Stories = function (){	
+	this.init = function(){
+		var self = this;
+		self.hashedData = {};
+		$.getJSON('storydata', function(data){
+			self.data = data;
+			var seriesSet = [];
+			for(var subsite in data){
+				var series = {};
+				series.name = subsite;
+				series.data = [];
+				for(var link in data[subsite]){
+					var linkData = data[subsite][link];
+					var date = new Date(linkData.Date);		
+					series.data.push([ date.getDOY(),
+									   linkData.Votes ]);
+				}
+				seriesSet.push(series);
+			}
+			self.chart = new Highcharts.Chart({
+					chart: {
+						renderTo: 'container', 
+						defaultSeriesType: 'scatter',
+						zoomType: 'xy'
+					},
+					title: {
+						text: 'Submitted Links'
+					},
+					xAxis: {
+						title: {
+							enabled: true,
+							text: 'Date'
+						},
+						startOnTick: true,
+						endOnTick: true,
+						showLastLabel: true //,
+						//type: 'datetime',
+						//tickInterval: (24 * 3600 * 1000 * 7)
+					},
+					yAxis: {
+						title: {
+							enabled: true,
+							text: 'Votes'
+						}
+					},
+					tooltip: {
+						formatter: function() {
+							var key = this.series.name + '^' + this.x + '^' + this.y;
+							var elem = eipi.PageObject.hashedData[key];
+							if(elem == undefined){
+								return "Loading...";
+							}
+							var title = elem.title;
+							if(title == undefined){
+								return "Unknown";
+							}
+							if(title.length > 20){
+								title = title.slice(0,17) + '...';
+							}
+				            return title + ' (' + this.y + ')';
+						}
+					},
+					legend: {
+						layout: 'vertical',
+						align: 'left',
+						verticalAlign: 'top',
+						x: 10,
+						//y: 70,
+						floating: true,
+						backgroundColor: '#FFFFFF',
+						borderWidth: 1
+					},
+					plotOptions: {
+						scatter: {
+							marker: {
+								radius: 5,
+								states: {
+									hover: {
+										enabled: true,
+										lineColor: 'rgb(100,100,100)'
+									}
+								}
+							},
+							states: {
+								hover: {
+									marker: {
+										enabled: false
+									}
+								}
+							}
+						}
+					},
+					series: seriesSet
+				});
+				self.BuildHashset();
+		});
+	};
+	
+	this.BuildHashset = function(){
+		var self = eipi.PageObject;
+		self.hashedData = {};
+		for(var subsite in eipi.PageObject.data){
+			for(var link in eipi.PageObject.data[subsite]){
+				var linkData = eipi.PageObject.data[subsite][link];
+				var date = new Date(linkData.Date);		
+				
+				var key = subsite + '^' + date.getDOY() + '^' + linkData.Votes;
+				self.hashedData[key] = {'title': linkData.Title,
+										'permalink': linkData.PermaLink};
+				
+			}
+		}
+		
+		eipi.PageObject.data = undefined;		
+	};
+}
+</script>
+</body>
+</html>

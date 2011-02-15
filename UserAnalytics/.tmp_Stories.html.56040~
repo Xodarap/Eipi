@@ -1,0 +1,95 @@
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js" type="text/javascript"></script>
+	<script src="../static/js/jquery-ui-1.8.6.custom.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="../static/css/redmond/jquery-ui-1.8.6.custom.css" type="text/css" media="screen"/>
+	<script type="text/javascript" src="..static/js/highcharts.js"></script>
+
+	<style type="text/css">
+	</style>
+</head>
+<body>
+
+<div id="container"></div>
+<a href="javascript:;" onclick="eipi.update()" id="updateButton">Update</a>
+<script type="text/javascript">
+$(document).ready(function(){
+})	
+
+eipi ={};
+eipi.Stories = function(){
+	this.init();
+}
+eipi.Stories.prototype = {
+	eipi.Stories.init: function(){
+		var self = this;
+		$.getJSON('/storyData', function(data){
+			series = [{name: 'Test', data [[1,1], [2,2]]}];
+			self.chart = new Highcharts.Chart({
+					chart: {
+						renderTo: 'container', 
+						defaultSeriesType: 'scatter',
+						zoomType: 'xy'
+					},
+					title: {
+						text: 'Submitted Links'
+					},
+					xAxis: {
+						title: {
+							enabled: true,
+							text: 'Date'
+						},
+						startOnTick: true,
+						endOnTick: true,
+						showLastLabel: true
+					},
+					yAxis: {
+						title: {
+							enabled: true,
+							text: 'Votes'
+						}
+					},
+					tooltip: {
+						formatter: function() {
+				                return this.y;
+						}
+					},
+					legend: {
+						layout: 'vertical',
+						align: 'left',
+						verticalAlign: 'top',
+						x: 100,
+						y: 70,
+						floating: true,
+						backgroundColor: '#FFFFFF',
+						borderWidth: 1
+					},
+					plotOptions: {
+						scatter: {
+							marker: {
+								radius: 5,
+								states: {
+									hover: {
+										enabled: true,
+										lineColor: 'rgb(100,100,100)'
+									}
+								}
+							},
+							states: {
+								hover: {
+									marker: {
+										enabled: false
+									}
+								}
+							}
+						}
+					},
+					series: series
+				});
+
+		});
+	}
+}
+</script>
+</body>
+</html>

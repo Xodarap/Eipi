@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        
+<script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"
+type="text/javascript">
+</script>
+
+<link rel="stylesheet" href="../static/css/redmond/jquery-ui-1.8.6.custom.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../static/css/eipi.main.css" type="text/css" media="screen" />
+
+<style type="text/css">
+#storyHolder {
+  width: 100%;
+  list-style-type: none;
+  margin: 0px 0px;
+  padding: 0px 0px;
+}
+
+#storyHolder li {
+  margin-bottom: 5px;
+}
+
+#storyHolder li:hover {
+  background-color: #ebf2fc;
+}
+
+#storyHolder .icon {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+}
+
+#storyHolder .thumbsUp {
+  background-image: url('/static/graphics/Silk_arrow_up.png');
+  background-position: -2px;
+}
+
+#storyHolder .thumbsDown {
+  background-image: url('/static/graphics/Red_down.png');
+}
+
+#storyHolder a {
+  color: #1B75BB;
+  text-decoration: none;
+/*
+  padding-left: 5px;
+  padding-right: 5px;
+  -moz-border-radius: 2px;
+/*
+}
+
+/*
+#storyHolder a:hover {
+  color: #FFF;
+  background-color: #1b75bb;
+}
+*/
+</style>
+
+        <title></title>
+    </head>
+
+    <body>
+        <div id="loading_display_holder">
+            <div id="loading_display">
+            	<img src="/static/css/images/ajax-loader.gif" alt="loading"/>
+                <span class="loadingText">Loading...</span>
+            </div>
+        </div>
+
+	<ul id="storyHolder"></ul>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $.get('recentstorydata', function(data){
+    var $storyHolder = $('#storyHolder');
+    $storyHolder.css('visibility', 'hidden');
+    for(var idx in data){
+      $storyHolder.append('<li>' + data[idx] + '</li>');
+    }
+    $storyHolder.css('visibility', 'visible');
+  });
+}); 
+
+$(document).ajaxStart(function() {
+$('#loading_display_holder').slideDown("fast");
+});
+
+
+$(document).ajaxStop(function() {
+$('#loading_display_holder').slideUp("fast");
+});
+</script>
+    </body>
+</html>
+
