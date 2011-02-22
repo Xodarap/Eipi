@@ -102,7 +102,7 @@ def story_to_html(story):
     title ='Vote this story ' + ('up' if story.VoteUp else 'down')
     css_class = 'thumbsUp' if story.VoteUp else 'thumbsDown'
     icon = '<span class="icon ' + css_class + '" title="' + title +'">&nbsp;</span>'
-    link = '<a href="' + story.Url + '" title="' + story.title + '">' + story.title[0:50] + '</a>'
+    link = '<a href="' + story.Url + '" title="' + story.title + '">' + story.title[0:100] + '</a>'
     return icon + link
 
 class storyTable:
