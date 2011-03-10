@@ -1,6 +1,6 @@
 # Django settings for eipi2 project.
 
-DEBUG = True
+DEBUG  = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -83,8 +83,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'feeds',
-    'UserAnalytics',
-    'gina'
+    'UserAnalytics'#,
+#    'gina'
 )
 
 LOGIN_URL = '/account/login'

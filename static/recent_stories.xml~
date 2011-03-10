@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+  <ModulePrefs title="Recent stories">
+</ModulePrefs>
+  <Content view="home" href="http://eipi.alwaysdata.net/feeds/recentstories" type="url">
+  </Content>
+</Module>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="Reputation Trends" 
+	       description="Shows recent trends in your reputation"
+	       author="Ben West"
+	       />
+  <Content view="canvas,home" type="url"  href="http://eipi.alwaysdata.net/useranalytics/1/graph" 
+	   preferred_width="400"
+	   />
+</Module>

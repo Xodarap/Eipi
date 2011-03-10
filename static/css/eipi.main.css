@@ -1,0 +1,36 @@
+/* Loading display */
+	
+#loading_display_holder{    
+    position: fixed;    
+    display: none;
+    z-index: 400;    
+    width: 100%;    
+    top: 0px;    
+    right: 0px;    
+}
+
+#loading_display{    
+    position: relative;    
+    margin: 0 auto 0 auto;    
+    padding: 5px 0px;    
+    width: 150px;    
+    color: #000000;    
+    text-align: center;    
+    background-color: #FFFACD;    
+    border: 1px solid #FFEC8B;    
+    -moz-border-radius-bottomright: 5px;    
+    -moz-border-radius-bottomleft: 5px;    
+    -webkit-border-bottom-left-radius: 5px;    
+    -webkit-border-bottom-right-radius: 5px;    
+}
+
+#loading_display .loadingText {
+	margin-left:10px;
+}
+
+/* Table */
+
+/* Make text wrap */
+.ui-jqgrid tr.jqgrow td {
+    white-space: normal !important;
+}

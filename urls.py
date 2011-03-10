@@ -51,5 +51,5 @@ urlpatterns = patterns('',
 urlpatterns += patterns('django.views.static',
 (r'^static/(?P<path>.*)$', 
     'serve', {
-    'document_root': '/home/eipi/eipi2/static/',
+    'document_root': '/home/eipi/webapps/django/eipi2/eipi2',
     'show_indexes': True }),)
