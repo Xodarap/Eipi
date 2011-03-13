@@ -23,3 +23,10 @@ class Source(models.Model):
     def __unicode__(self):
         return self.Url
     
+class Comment(models.Model):
+    Url = models.URLField()
+    Date = models.DateTimeField()
+    Content = models.TextField()
+    KeyWord = models.TextField()
+    Story = models.ForeignKey('Story', null = True)
+    Valid = models.NullBooleanField()

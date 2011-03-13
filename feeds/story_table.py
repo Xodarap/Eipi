@@ -1,0 +1,114 @@
+from django.template import Context, loader
+from eipi2.feeds.models import Story, Comment
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.core import serializers
+from django.utils import simplejson
+from django.db.models.query import QuerySet
+from eipi2.feeds.addFeeds import addFeeds
+from django.http import HttpResponseRedirect
+from eipi2.feeds.FeedFilter import feedFilter
+from django.db.models import Q
+import itertools
+import re
+import string
+import urllib2
+from django.core.paginator import Paginator
+from eipi2.feeds.add_comments import add_comments
+
+class story_table:
+    @staticmethod
+    def buildStoryTable(stories, maxPages, curPage):
+        dict = {'page': curPage,
+                'total':maxPages
+                }    
+        rows = []
+        cnt = 0;
+        h = feedFilter()
+        for story in stories:
+            cnt += 1
+            score, evidence = h.Score(story, True)
+            cleansed = story_table.understandEvidence(evidence)
+            score = "%.2f" % score
+            votes = ''
+            if (story.Ups != None and story.Downs != None):
+                votes = story.Ups - story.Downs
+            rows.append({'id': story.id,
+                         'cell':
+                            [str(story.AddedTime.day),
+                             story.category,
+                             story_table.addLink(story.Url, story.title),
+                             story_table.addCheckbox(story.id, story.valid, 'toggleValid'),
+                             story_table.addCheckbox(story.id, story.VoteUp,'toggleVote'),
+                             score,
+                             votes   
+                             ]
+                        })
+        dict['items'] = cnt
+        dict['rows'] = rows
+        return dict
+
+    @staticmethod
+    def addCheckbox(story_id, checked, method):
+        return '<input type="checkbox" onclick="eipi.' + method +'(' + str(story_id) + ')" ' + ('checked="checked"' if checked else '') + ' class="turnIntoCheckbox"/>'
+
+    @staticmethod
+    def addLink(url, title):
+        cleanTitle = "".join([ch for ch in title if ord(ch) < 128])
+        cleanUrl = "".join([ch for ch in url if ord(ch) < 128])
+
+        return '<a href="' + str(cleanUrl) + '" >' + str(cleanTitle) + '</a>'
+    
+    # The spambayes thing returns clues in a really weird way
+    # this makes it a little easier to understand
+    @staticmethod
+    def understandEvidence(clues):
+        return ''
+        #genClues = story_table.filterEvidence(clues)
+        #return list(itertools.islice(genClues, 0, 1))
+        
+    @staticmethod    
+    def filterEvidence(clues):    
+        #cleaner = re.compile('\\\\\d{2}')
+        for clue in clues:
+            # there are two special "clues" which are the
+            # spam and ham likelihoods. We don't want those
+            if clue[0] == '*H*' or clue[0] == '*S*':
+                continue
+            #str = clue[0]  #.encode('ascii', 'ignore')
+            #cleansed = re.sub(r'\x', '', str)
+            #yield 'test'
+            try:
+                yield clue[0].encode('ascii', 'ignore')
+            except:
+                continue
+
+    @staticmethod
+    def build_comment_table(comments, maxPages, curPage):
+        dict = {'page': curPage,
+                'total':maxPages
+                }    
+        rows = map(story_table.comment_row, comments)
+        cnt = len(rows);
+        dict['items'] = cnt
+        dict['rows'] = rows
+        return dict
+
+    @staticmethod
+    def comment_row(comment):
+        story_url = ""
+        story_text = ""
+        if comment.Story != None:
+            story_url = comment.Story.Url
+            story_text = comment.Story.title
+            
+        return {'id': comment.id,
+         'cell':
+         [
+             story_table.addLink(comment.Url, comment.Content),
+             story_table.addLink(story_url, story_text),
+             story_table.addCheckbox(comment.id, comment.Valid, 'toggleValid'),
+             comment.Date.strftime('%m/%d'),
+             comment.KeyWord
+          ]
+         }

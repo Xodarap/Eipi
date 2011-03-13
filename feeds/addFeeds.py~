@@ -52,8 +52,10 @@ class addFeeds:
         for entry in data['data']['children']:
             storyData = entry['data']
             url = "http://www.reddit.com" + storyData['permalink']
-            url = url[0:199]
-            story, created = Story.objects.get_or_create(Url = url,
+            #url = [ch for ch in url if ord(ch) < 128]
+            url = url[0:199]            
+            try:
+                story, created = Story.objects.get_or_create(Url = url,
                                             defaults = {
                                                         'title': strip_tags(storyData['title']),
                                                         'AddedTime': datetime.datetime.now(),
@@ -61,15 +63,17 @@ class addFeeds:
                                                         'category': category,
                                                         'source': feedUrl
                                                         })
-            story.Ups = storyData['ups']
-            story.Downs = storyData['downs']
-            story.save()
+                story.Ups = storyData['ups']
+                story.Downs = storyData['downs']
+                story.save()
             
-            if(created):
-                filter.Train(story)
-                        
+                if(created):
+                    filter.Train(story)
+            except:
+                pass
     @staticmethod
     def addAllFeeds():
+        addFeeds.retrain()
         waitTime = timedelta(minutes = 5)
         for src in Source.objects.filter(LastGet__lt = (datetime.datetime.now() - waitTime)):
             if src == None:
@@ -79,3 +83,9 @@ class addFeeds:
             src.save()
         #h = feedFilter()
         #h.Train()    
+
+    @staticmethod
+    def retrain():
+        h = feedFilter()
+        h.TrainAll()
+            

@@ -1,0 +1,60 @@
+import sys
+import MySQLdb
+import feedparser
+import datetime
+import simplejson
+import urllib2
+from datetime import timedelta
+from eipi2.feeds.models import Story, Source, Comment
+from django.utils.html import strip_tags
+from eipi2.feeds.FeedFilter import feedFilter
+
+class add_comments:
+    @staticmethod
+    def add_json_comments(feed_url, keyword):
+        filter = feedFilter()
+        req = urllib2.Request(feed_url)
+        opener = urllib2.build_opener()
+        f = opener.open(req)
+        data = simplejson.load(f)
+        for entry in data['comments']:
+            comment_data = entry['comment']
+            url = comment_data['url']
+            url = url[0:199]
+            comment, created = Comment.objects.get_or_create(Url = url,
+                                                             defaults = {
+                'Content': strip_tags(comment_data['content']),
+                'Date': comment_data['date'],
+                'Valid': False,
+                'KeyWord': keyword
+                })
+            comment.save()
+            if "www.reddit.com" in url:
+                add_commments.add_story(url, filter)
+
+    @staticmethod
+    def add_comments():
+        add_comments.add_json_comments('http://api.backtype.com/comments/search.json?q=peta&key=81a8e4dcfc0af5d3781f','peta') 
+
+    @staticmethod
+    def add_story(url, filter):
+        req = urllib2.Request(url + ".json")
+        opener = urllib2.build_opener()
+        f = opener.open(req)
+        data = simplejson.load(f)
+        story_data = data[0]['data']['children'][0]
+        story, created = Story.objects.get_or_create(Url = url,
+                                                     defaults = {
+            'title': strip_tags(story_data['title']),
+            'AddedTime': datetime.datetime.now(),
+            'valid': False,
+            'category': 'backtrace',
+            'source': url
+            })
+        story.Ups = story_data['ups']
+        story.Downs = story_data['downs']
+        story.save()
+
+        if(created):
+            filter.Train(story)
+

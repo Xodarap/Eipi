@@ -19,7 +19,6 @@ type="text/javascript">
 "text/javascript">
 </script>
 		
-		
 <style type="text/css">
         a {
             text-decoration: none;
@@ -50,54 +49,37 @@ type="text/javascript">
         <div id="pager">
         </div>
         <br />
-        <a href="javascript:;" onclick="eipi.update()" id=
-        "updateButton">Update</a> 
 <script type="text/javascript">
 $(document).ready(function(){
     $("#storyHolder").jqGrid({ 
-        url:'storyList',
+        url:'petaData',
         datatype: "json", 
         height: 500, 
-        colNames:['Date', 'Category', 'Title', 'Valid', 'Vote Up', 'Score', 'Votes'], 
         colModel:[ 
-                    {name:'Date',index:'AddedTime', width:40, sorttype:"date"}, 
-                    {name:'Category', index:'Category', width:90, sortable:true},
-                    {name:'Title',index:'title', width:700}, 
+	            {name:'Content', index:'Content', width: 350},
+		    {name:'Story', index:'Story', width: 350},
                     {name:'Valid',index:'valid', width:50, sortable:true},
-{name: 'Vote Up', index:'VoteUp', width: 50, sortable: true},
-					{name:'Score', index:'Score', width:50, sortable:false},
-					{name:'Votes', index:'Votes', width:50, sortable:true} 
+                    {name:'Date',index:'Date', width:70, sorttype:"date"}, 
+                    {name:'Keyword', index:'Keyword', width:90, sortable:true}
                 ], 
+	sortname: 'Date',	
         multiselect: false, 
-        caption: "Stories",
+        caption: "Comments",
         pager:'#pager',
         gridComplete: function(){
             //$('input.turnIntoCheckbox').checkbox()
         }//,
         //loadonce: true//,  
     }); 
-    $('#updateButton').button();
-    //$('input.turnIntoCheckbox').checkbox();
 })  
 
 eipi ={};
 eipi.toggleValid = function(id){
-    $.getJSON('/' + id +'/vote', function(data){
-        //var old = $('#storyHolder').jqGrid('getRowData', id);
-        //old['Valid'] = $(old['Valid']).attr('checked', data.valid ? 'checked' : '').html();
-        //$('#storyHolder').jqGrid('setRowData', id, old);      
+    $.getJSON('/' + id +'/votepeta', function(data){
+
     }); 
 };
-eipi.toggleVote = function(id){
- var shouldVoteUp = $('#check-vote-' + id).is(':checked') ? 1 : 0;
- $.getJSON('/' + id +'/voteup/' + shouldVoteUp, function() {});
-};   
-eipi.update = function(){
-    $.post('update', function(data){
-        //$("#storyHolder").jqGrid().trigger("reloadGrid");
-        location.reload(); 
-    });
-}
+
 $(document).ajaxStart(function() {
 $('#loading_display_holder').slideDown("fast");
 });

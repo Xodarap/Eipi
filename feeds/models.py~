@@ -10,6 +10,7 @@ class Story(models.Model):
     source = models.TextField(null = True)
     Ups = models.IntegerField(null = True)
     Downs = models.IntegerField(null = True)
+    VoteUp = models.NullBooleanField()
     
     def __unicode__(self):
         return self.title
@@ -22,3 +23,9 @@ class Source(models.Model):
     def __unicode__(self):
         return self.Url
     
+class Comment(models.Model):
+    Url = models.URLField()
+    Date = models.DateTimeField()
+    Content = models.TextField()
+    KeyWord = models.TextField()
+    Story = models.ForeignKey('Story', null = True)

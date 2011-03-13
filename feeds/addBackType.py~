@@ -1,0 +1,37 @@
+import sys
+import MySQLdb
+import feedparser
+import datetime
+import simplejson
+import urllib2
+from datetime import timedelta
+from eipi2.feeds.models import Story, Source
+from django.utils.html import strip_tags
+from eipi2.feeds.FeedFilter import feedFilter
+
+class add_comments:
+    @staticmethod
+    def addJsonFeed(feedUrl, category, filter):
+        req = urllib2.Request(feedUrl)
+            opener = urllib2.build_opener()
+                f = opener.open(req)
+                    data = simplejson.load(f)
+                    for entry in data['data']['children']:
+                        storyData = entry['data']
+                            url = "http://www.reddit.com" + storyData['permalink']
+                                #url = [ch for ch in url if ord(ch) < 128]
+                                url = url[0:199]
+                                try:
+                                    story, created = Story.objects.get_or_create(Url = url,
+                                                                                                                             defaults = {
+                                        'title': strip_tags(storyData['title']),
+                                        'AddedTime': datetime.datetime.now(),
+                                        'valid': False,
+                                        'category': category,
+                                        'source': feedUrl
+                                                                                                })
+                                        story.Ups = storyData['ups']
+                                            story.Downs = storyData['downs']
+                                                story.save()
+
+                                                                                                                                                        

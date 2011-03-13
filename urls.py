@@ -5,6 +5,10 @@ from django.contrib import admin
 from eipi2 import UserAnalytics
 import UserAnalytics.views
 
+# django cron
+import django_cron
+django_cron.autodiscover()
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -26,6 +30,10 @@ urlpatterns = patterns('',
     (r'^feeds/updateAll$', 'feeds.views.updateAll'),
     (r'^feeds/recentstories$', 'feeds.views.recent_stories'),
     (r'^feeds/recentstorydata$', 'feeds.views.recent_stories_data'),
+    (r'^feeds/peta$', 'feeds.views.peta'),
+    (r'^feeds/petaData$', 'feeds.views.peta_data'),
+    (r'^feeds/addComments$', 'feeds.views.add_comments_view'),
+    (r'^(?P<comment_id>\d+)/votepeta$', 'feeds.views.vote_peta'),
     
     (r'^useranalytics/(?P<user_id>\d+)/update$', 'UserAnalytics.views.update'),
     (r'^useranalytics/$', 'UserAnalytics.views.index'),
@@ -51,5 +59,5 @@ urlpatterns = patterns('',
 urlpatterns += patterns('django.views.static',
 (r'^static/(?P<path>.*)$', 
     'serve', {
-    'document_root': '/home/eipi/webapps/django/eipi2/eipi2',
+    'document_root': '/home/eipi/webapps/django/eipi2/eipi2/static/',
     'show_indexes': True }),)

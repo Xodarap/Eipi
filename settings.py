@@ -12,10 +12,10 @@ MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'django.db.backends.mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 #DATABSE_ENGINE = 'mysql'
-DATABASE_NAME = 'eipi_eipi'             # Or path to database file if using sqlite3.
+DATABASE_NAME = 'eipi'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'eipi'             # Not used with sqlite3.
-DATABASE_PASSWORD = 'aUwe731?'         # Not used with sqlite3.
-DATABASE_HOST = 'mysql.alwaysdata.com'             # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_PASSWORD = 'vegANdoit2011'         # Not used with sqlite3.
+DATABASE_HOST = '' #'web182.webfactional.com'             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = '' #'3306'             # Set to empty string for default. Not used with sqlite3.
 
 # Local time zone for this installation. Choices can be found here:
@@ -83,8 +83,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'feeds',
-    'UserAnalytics'#,
-#    'gina'
+    'UserAnalytics',
+    'django_cron'
 )
 
 LOGIN_URL = '/account/login'

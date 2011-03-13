@@ -73,6 +73,7 @@ class addFeeds:
                 pass
     @staticmethod
     def addAllFeeds():
+        #addFeeds.retrain()
         waitTime = timedelta(minutes = 5)
         for src in Source.objects.filter(LastGet__lt = (datetime.datetime.now() - waitTime)):
             if src == None:
@@ -82,3 +83,9 @@ class addFeeds:
             src.save()
         #h = feedFilter()
         #h.Train()    
+
+    @staticmethod
+    def retrain():
+        h = feedFilter()
+        h.TrainAll()
+            

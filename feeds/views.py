@@ -1,5 +1,5 @@
 from django.template import Context, loader
-from eipi2.feeds.models import Story
+from eipi2.feeds.models import Story, Comment
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core import serializers
@@ -14,18 +14,16 @@ import re
 import string
 import urllib2
 from django.core.paginator import Paginator
+from eipi2.feeds.add_comments import add_comments
+from eipi2.feeds.story_table import story_table
 
 # Create your views here.
 def index(request):
     return render_to_response('feeds/index.html', {})
-'''
-def storyList(request):
-    r = HttpResponse(mimetype='application/json')
-    r.write(simplejson.dumps(storyTable.buildStoryTable(
-                                  Story.objects.all().order_by('AddedTime').reverse()
-                                                          )))
-    return r
-'''
+
+def peta(request):
+    return render_to_response('feeds/peta.html', {})
+
 def storyList(request):
     rows = int(request.GET.get('rows'))
     page = int(request.GET.get('page'))
@@ -40,10 +38,36 @@ def storyList(request):
     paginator = Paginator(stories, rows)
     curPage = paginator.page(page)
     r = HttpResponse(mimetype='application/json')
-    r.write(simplejson.dumps(storyTable.buildStoryTable(curPage.object_list,
+    r.write(simplejson.dumps(story_table.buildStoryTable(curPage.object_list,
                                                         paginator.num_pages,
                                                         page)))
     return r
+
+def peta_data(request):
+    rows = int(request.GET.get('rows'))
+    page = int(request.GET.get('page'))
+    sort_by = request.GET.get('sidx')
+    if (sort_by == ''):
+        sort_by = 'Date'
+    elif (sort_by == 'Votes'):
+        sort_by = 'Ups'
+    stories = Comment.objects.all().order_by(sort_by).reverse()
+    if (request.GET.get('sord') == 'desc'):
+        stories = stories.reverse()
+    paginator = Paginator(stories, rows)
+    curPage = paginator.page(page)
+    r = HttpResponse(mimetype='application/json')
+    r.write(simplejson.dumps(story_table.build_comment_table(curPage.object_list,
+                                                        paginator.num_pages,
+                                                        page)))
+    return r
+
+def add_comments_view(request):
+    add_comments.add_comments()
+    r = HttpResponse(mimetype='application/json')
+    r.write(simplejson.dumps(True))
+    return r
+    
 
 def vote(request, story_id):
     p = get_object_or_404(Story, pk = story_id)
@@ -64,6 +88,14 @@ def vote_up(request, story_id, should_be_up):
     r.write(simplejson.dumps({'VoteUp': str(p.VoteUp)}))
     return r    
 
+def vote_peta(request, comment_id):
+    comment = get_object_or_404(Comment, pk = comment_id)
+    comment.Valid = not comment.Valid
+    comment.save()
+    r = HttpResponse(mimetype='application/json')
+    r.write(simplejson.dumps(True))
+    return r    
+
 def update(request):
     addFeeds.addAllFeeds()
     r = HttpResponse(mimetype='application/json')
@@ -71,6 +103,7 @@ def update(request):
     return r
     #return HttpResponseRedirect('/feeds')
 
+#TODO: Is this ever called?
 def updateAll(request):
     for story in Story.objects.filter(Url__contains = 'http://www.reddit.com').filter(
                                               Q(Ups__isnull = True) | Q(Downs__isnull = True)):        
@@ -104,70 +137,3 @@ def story_to_html(story):
     icon = '<span class="icon ' + css_class + '" title="' + title +'">&nbsp;</span>'
     link = '<a href="' + story.Url + '" title="' + story.title + '">' + story.title[0:100] + '</a>'
     return icon + link
-
-class storyTable:
-    @staticmethod
-    def buildStoryTable(stories, maxPages, curPage):
-        dict = {'page': curPage,
-                'total':maxPages
-                }    
-        rows = []
-        cnt = 0;
-        h = feedFilter()
-        for story in stories:
-            cnt += 1
-            score, evidence = h.Score(story, True)
-            cleansed = storyTable.understandEvidence(evidence)
-            score = "%.2f" % score
-            votes = ''
-            if (story.Ups != None and story.Downs != None):
-                votes = story.Ups - story.Downs
-            rows.append({'id': story.id,
-                         'cell':
-                            [str(story.AddedTime.day),
-                             story.category,
-                             storyTable.addLink(story.Url, story.title),
-                             storyTable.addCheckbox(story.id, story.valid, 'toggleValid'),
-                             storyTable.addCheckbox(story.id, story.VoteUp,'toggleVote'),
-                             score,
-                             votes   
-                             ]
-                        })
-        dict['items'] = cnt
-        dict['rows'] = rows
-        return dict
-
-    @staticmethod
-    def addCheckbox(story_id, checked, method):
-        return '<input type="checkbox" onclick="eipi.' + method +'(' + str(story_id) + ')" ' + ('checked="checked"' if checked else '') + ' class="turnIntoCheckbox"/>'
-
-    @staticmethod
-    def addLink(url, title):
-        cleanTitle = "".join([ch for ch in title if ord(ch) < 128])
-        cleanUrl = "".join([ch for ch in url if ord(ch) < 128])
-
-        return '<a href="' + str(cleanUrl) + '" >' + str(cleanTitle) + '</a>'
-    
-    # The spambayes thing returns clues in a really weird way
-    # this makes it a little easier to understand
-    @staticmethod
-    def understandEvidence(clues):
-        return ''
-        #genClues = storyTable.filterEvidence(clues)
-        #return list(itertools.islice(genClues, 0, 1))
-        
-    @staticmethod    
-    def filterEvidence(clues):    
-        #cleaner = re.compile('\\\\\d{2}')
-        for clue in clues:
-            # there are two special "clues" which are the
-            # spam and ham likelihoods. We don't want those
-            if clue[0] == '*H*' or clue[0] == '*S*':
-                continue
-            #str = clue[0]  #.encode('ascii', 'ignore')
-            #cleansed = re.sub(r'\x', '', str)
-            #yield 'test'
-            try:
-                yield clue[0].encode('ascii', 'ignore')
-            except:
-                continue

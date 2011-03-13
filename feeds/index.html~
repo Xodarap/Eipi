@@ -63,7 +63,7 @@ $(document).ready(function(){
         height: 500, 
         colNames:['Date', 'Category', 'Title', 'Valid', 'Vote Up', 'Score', 'Votes'], 
         colModel:[ 
-                    {name:'Date',index:'AddedDate', width:40, sorttype:"date"}, 
+                    {name:'Date',index:'AddedTime', width:40, sorttype:"date"}, 
                     {name:'Category', index:'Category', width:90, sortable:true},
                     {name:'Title',index:'title', width:700}, 
                     {name:'Valid',index:'valid', width:50, sortable:true},

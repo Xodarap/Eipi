@@ -1,0 +1,11 @@
+from django_cron import cronScheduler, Job
+from eipi2.feeds.addFeeds import addFeeds
+# Scheduled tasks
+
+class UpdateFeeds(Job):
+    # run every hour
+    run_every = 3600
+    def job(self):
+        addFeeds.addAllFeeds()
+
+cronScheduler.register(UpdateFeeds)
