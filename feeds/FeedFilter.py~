@@ -43,7 +43,7 @@ class feedFilter:
         self.h.train(story.title + " " + clean, story.valid)
     
     def UnTrain(self, story):
-        #self.h.untrain(story.title, story.valid)        
+        self.h.untrain(story.title, story.valid)        
         self.h.store()        
     def Score(self, story, evidence = False):
         return self.h.score(story.title, evidence)

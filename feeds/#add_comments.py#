@@ -12,7 +12,7 @@ from eipi2.feeds.FeedFilter import feedFilter
 class add_comments:
     @staticmethod
     def add_json_comments(feed_url, keyword):
-        req = urllib2.Request(feed_url)
+
         opener = urllib2.build_opener()
         f = opener.open(req)
         data = simplejson.load(f)
@@ -29,17 +29,16 @@ class add_comments:
                 })
             comment.save()
             if "www.reddit.com" in url:
-                #id = add_comments.add_story(url)
-                #comment.Story_id = id
-                #comment.save()
-                pass
+                id = add_comments.add_story(url, filter)
+                comment.Story_id = id
+                comment.save()
 
     @staticmethod
     def add_comments():
         add_comments.add_json_comments('http://api.backtype.com/comments/search.json?q=peta&key=81a8e4dcfc0af5d3781f','peta') 
 
     @staticmethod
-    def add_story(url):
+    def add_story(url, filter):
         req = urllib2.Request(url + ".json")
         opener = urllib2.build_opener()
         f = opener.open(req)

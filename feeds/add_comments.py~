@@ -30,7 +30,9 @@ class add_comments:
                 })
             comment.save()
             if "www.reddit.com" in url:
-                add_commments.add_story(url, filter)
+                id = add_comments.add_story(url, filter)
+                comment.Story_id = id
+                comment.save()
 
     @staticmethod
     def add_comments():
@@ -42,7 +44,7 @@ class add_comments:
         opener = urllib2.build_opener()
         f = opener.open(req)
         data = simplejson.load(f)
-        story_data = data[0]['data']['children'][0]
+        story_data = data[0]['data']['children'][0]['data']
         story, created = Story.objects.get_or_create(Url = url,
                                                      defaults = {
             'title': strip_tags(story_data['title']),
@@ -55,6 +57,7 @@ class add_comments:
         story.Downs = story_data['downs']
         story.save()
 
-        if(created):
-            filter.Train(story)
+        #if(created):
+        #    filter.Train(story)
 
+        return story.id

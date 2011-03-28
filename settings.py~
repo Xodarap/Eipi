@@ -1,11 +1,11 @@
 # Django settings for eipi2 project.
 
-DEBUG  = True
+DEBUG  = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
-    ('bwest', 'xodarap00@gmail.com')
+    ('bwest', 'xodarap00@gmail.com'),
 )
 
 MANAGERS = ADMINS
@@ -71,9 +71,11 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/home/eipi/webapps/django/eipi2/eipi2/',
-    '/home/eipi/webapps/django/eipi2/eipi2/feeds'
-
+    #'/home/eipi/webapps/django/eipi2/eipi2/',
+    #'/home/eipi/webapps/django/eipi2/eipi2/feeds'
+    '/home/eipi/eipi/feeds',
+    '/home/eipi/eipi/',
+    '/home/eipi/eipi/UserAnalytics'
 )
 
 INSTALLED_APPS = (
@@ -83,9 +85,16 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'feeds',
-    'UserAnalytics'#,
-#    'gina'
+    'UserAnalytics',
+    'django_cron'
 )
 
 LOGIN_URL = '/account/login'
 LOGIN_REDIRECT_URL = '/feeds/'
+
+#Email stuff
+EMAIL_HOST = 'smtp.webfaction.com'
+EMAIL_HOST_USER = 'eipi'
+EMAIL_HOST_PASSWORD = 'vegANdoit2011'
+DEFAULT_FROM_EMAIL = 'xodarap00@gmail.com'
+SERVER_EMAIL = 'xodarap00@gmail.com'

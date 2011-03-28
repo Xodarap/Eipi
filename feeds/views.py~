@@ -88,6 +88,14 @@ def vote_up(request, story_id, should_be_up):
     r.write(simplejson.dumps({'VoteUp': str(p.VoteUp)}))
     return r    
 
+def vote_peta(request, comment_id):
+    comment = get_object_or_404(Comment, pk = comment_id)
+    comment.Valid = not comment.Valid
+    comment.save()
+    r = HttpResponse(mimetype='application/json')
+    r.write(simplejson.dumps(True))
+    return r    
+
 def update(request):
     addFeeds.addAllFeeds()
     r = HttpResponse(mimetype='application/json')

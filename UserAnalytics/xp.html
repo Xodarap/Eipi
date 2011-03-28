@@ -1,0 +1,56 @@
+<html>
+<head>
+	<link rel="stylesheet" href="/static/css/redmond/jquery-ui-1.8.6.custom.css" type="text/css" media="screen"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js" type="text/javascript"></script>
+<style type="text/css">
+.xp-bar {
+  width: 150px;
+  height: 1.5em;
+  border: solid 1px black;
+}
+
+.xp {
+  height: 100%;
+  background: #cb60b3; /* old browsers */
+  background: -moz-linear-gradient(top, #cb60b3 0%, #c146a1 50%, #a80077 51%, #db36a4 100%); /* firefox */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cb60b3), color-stop(50%,#c146a1), color-stop(51%,#a80077), color-stop(100%,#db36a4)); /* webkit */
+
+  color: white;
+  overflow-x: show;
+  text-align: center;
+}
+
+.xp-text {
+  display: inline-block;
+  margin-top: 2px;
+}
+
+div.subxp {
+  background: #ffb76b; /* old browsers */
+  background: -moz-linear-gradient(top, #ffb76b 0%, #ffa73d 50%, #ff7c00 51%, #ff7f04 100%); /* firefox */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffb76b), color-stop(50%,#ffa73d), color-stop(51%,#ff7c00), color-stop(100%,#ff7f04)); /* webkit */
+}
+</style>
+</head>
+<body>
+<div id="container">
+<label>Conversions (level {{conv_level}})</label>
+<div class="xp-bar">
+  <div class="xp" id="xp" style="width:{{ conv_percent }}%">
+  <span class="xp-text">{{conv_complete}} / {{conv_next_level}}</status>
+  </div>
+</div>
+
+<label>Submissions (level {{stories_level}})</label>
+<div class="xp-bar">
+  <div class="xp subxp" style="width:{{ stories_percent }}%">
+  <span class="xp-text">{{stories_complete}} / {{stories_next_level}}</status>
+  </div>
+</div>
+</div>
+
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

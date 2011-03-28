@@ -7,17 +7,32 @@ from django.utils import simplejson
 from django.db.models.query import QuerySet
 from django.http import HttpResponseRedirect
 from eipi2.UserAnalytics import *
-from eipi2.UserAnalytics.models import SiteUser, SubmittedLink, Comment
+from eipi2.UserAnalytics.models import SiteUser, SubmittedLink, Comment, Links
 from eipi2 import UserAnalytics
 from eipi2.UserAnalytics.updateUser import userMgmt
 from datetime import datetime, timedelta
-from django.db.models import Avg, Max, Min, Count
+from django.db.models import Avg, Max, Min, Count, Sum
 from django.db import connection, transaction
 import operator
+import math
 
-def index(request):
-    return render_to_response('feeds/index.html', {})
-
+def xp(request, user_id):
+    user  = get_object_or_404(SiteUser, pk = user_id)
+    clicks = Links.objects.all().aggregate(Sum('Clicks'))['Clicks__sum']
+    stories = SubmittedLink.objects.all().aggregate(Sum('Votes'))['Votes__sum']
+    conv_level = int(math.floor(math.log(clicks,2)))
+    conv_next = int(math.pow(2, conv_level + 1))
+    stories_level = int(math.floor(math.log(stories,2)))
+    stories_next = int(math.pow(2, stories_level + 1))
+    
+    return render_to_response('UserAnalytics/xp.html', { 'conv_percent' : (float(clicks) / conv_next) * 100,
+                                                         'conv_complete' : clicks,
+                                                         'conv_next_level' : conv_next,
+                                                         'conv_level': conv_level,
+                                                         'stories_percent' : (float(stories) / stories_next) * 100,
+                                                         'stories_complete' : stories,
+                                                         'stories_next_level' : stories_next,
+                                                         'stories_level' : stories_level})
 # JSON method
 def update(request, user_id):
     currentUser = get_object_or_404(SiteUser, pk = user_id)

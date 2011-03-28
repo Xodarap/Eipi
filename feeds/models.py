@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 class Story(models.Model):
     Url = models.URLField()
     AddedTime = models.DateTimeField()
@@ -30,3 +29,8 @@ class Comment(models.Model):
     KeyWord = models.TextField()
     Story = models.ForeignKey('Story', null = True)
     Valid = models.NullBooleanField()
+'''
+class Error(models.Model):
+    Date = models.DateTimeField()
+    Message = models.TextField()
+'''    

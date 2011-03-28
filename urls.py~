@@ -7,7 +7,7 @@ import UserAnalytics.views
 
 # django cron
 import django_cron
-#django_cron.autodiscover()
+django_cron.autodiscover()
 
 admin.autodiscover()
 
@@ -55,9 +55,10 @@ urlpatterns = patterns('',
     #     [k for k,v in UserAnalytics.views.__dict__.items() if callable(v)]
     # )
 )
-
+'''
 urlpatterns += patterns('django.views.static',
 (r'^static/(?P<path>.*)$', 
     'serve', {
     'document_root': '/home/eipi/webapps/django/eipi2/eipi2/static/',
     'show_indexes': True }),)
+'''

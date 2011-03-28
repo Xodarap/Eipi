@@ -3,6 +3,7 @@ from eipi2.feeds.models import *
 import urllib2
 import simplejson
 import datetime
+import logging
 
 class userMgmt:
     @staticmethod
@@ -20,30 +21,50 @@ class userMgmt:
     def updateRedditComments(siteUser):
         req = urllib2.Request("http://www.reddit.com/user/" + siteUser.Name + "/comments/.json")
         opener = urllib2.build_opener()
-        f = opener.open(req)
-        data = simplejson.load(f)        
-        reddit, created = Site.objects.get_or_create(Name = 'reddit')
-        reddit.save()
+        try:
+            f = opener.open(req)
+            data = simplejson.load(f)        
+            reddit, created = Site.objects.get_or_create(Name = 'reddit')
+            reddit.save()
+
+            for comment in data['data']['children']:
+                cmtData = comment['data']
+                subReddit, created = SubSite.objects.get_or_create(Name = cmtData['subreddit'],
+                                                          defaults = {'Site_id' : reddit.id})
+                subReddit.Site = reddit
+                subReddit.save()
+                newComment, created = Comment.objects.get_or_create(Id = cmtData['id'],
+                                                                    defaults = { 
+                                                                        'SiteUser' : siteUser,
+                                                                        'SubSite' : subReddit,
+                                                                        'Date' : datetime.datetime.fromtimestamp(cmtData['created']),
+                                                                        'Text' : cmtData['body_html']
+                                                                    }
+                                                                    )
+                newComment.Replies = cmtData['replies']
+                if(newComment.Replies == ''):
+                    newComment.Replies = 0
+                newComment.Votes = cmtData['ups'] - cmtData['downs']
+                newComment.save()
+        except:
+            logging.exception('Error updating user - is reddit down?')
+
+        userMgmt.add_bitly('hpGK0b')
         
-        for comment in data['data']['children']:
-            cmtData = comment['data']
-            subReddit, created = SubSite.objects.get_or_create(Name = cmtData['subreddit'],
-                                                      defaults = {'Site_id' : reddit.id})
-            subReddit.Site = reddit
-            subReddit.save()
-            newComment, created = Comment.objects.get_or_create(Id = cmtData['id'],
-                                                                defaults = { 
-                                                                    'SiteUser' : siteUser,
-                                                                    'SubSite' : subReddit,
-                                                                    'Date' : datetime.datetime.fromtimestamp(cmtData['created']),
-                                                                    'Text' : cmtData['body_html']
-                                                                }
-                                                                )
-            newComment.Replies = cmtData['replies']
-            if(newComment.Replies == ''):
-                newComment.Replies = 0
-            newComment.Votes = cmtData['ups'] - cmtData['downs']
-            newComment.save()
+            # TODO: if(re.search("http://bit\.ly/(?P<hash>.+)\"", cmtData['body_html']).group("hash")
+    @staticmethod
+    def add_bitly(hash):
+        base_url = 'https://api-ssl.bitly.com/v3/clicks?login=xodarap&apiKey=R_c83359ddea209b03313b463317cb3c41&hash='
+        req = urllib2.Request(base_url + hash)
+        opener = urllib2.build_opener()
+        f = opener.open(req)
+        data = simplejson.load(f)
+
+        link, created = Links.objects.get_or_create(Hash = hash,
+                                    defaults = {'Date': datetime.datetime.now(),
+                                                'Clicks': 0})
+        link.Clicks = data['data']['clicks'][0]['user_clicks']
+        link.save()
                         
     @staticmethod    
     def updateRedditStories(siteUser):    

@@ -45,6 +45,7 @@ urlpatterns = patterns('',
     (r'^useranalytics/(?P<user_id>\d+)/storyaggregation', 'UserAnalytics.views.storyAggregation'),
     (r'^useranalytics/(?P<user_id>\d+)/graph$', 'UserAnalytics.views.graph'),
     (r'^useranalytics/(?P<user_id>\d+)/graphaggregation$', 'UserAnalytics.views.graph_data'),
+    (r'^useranalytics/(?P<user_id>\d+)/xp$', 'UserAnalytics.views.xp'),
 
     (r'^gina/$','gina.views.index'),
     (r'^gina/data$','gina.views.data')    
@@ -55,9 +56,10 @@ urlpatterns = patterns('',
     #     [k for k,v in UserAnalytics.views.__dict__.items() if callable(v)]
     # )
 )
-
+'''
 urlpatterns += patterns('django.views.static',
 (r'^static/(?P<path>.*)$', 
     'serve', {
     'document_root': '/home/eipi/webapps/django/eipi2/eipi2/static/',
     'show_indexes': True }),)
+'''

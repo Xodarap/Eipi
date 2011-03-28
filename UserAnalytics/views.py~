@@ -96,13 +96,13 @@ def graph_data(request, user_id):
     cmd = """
     select sum(sum1) as s1, sum(sum2), sum(sum3), sum(sum4), sum(sum5), sum(sum6), sum(sum7) from (
     SELECT 
-    (CASE WHEN `{0}` <= CurDate() - 1 THEN Votes ELSE 0 END) as sum1,
-    (CASE WHEN `{0}` <= CurDate() - 2 THEN Votes ELSE 0 END) as sum2,
-    (CASE WHEN `{0}` <= CurDate() - 3 THEN Votes ELSE 0 END) as sum3,
-    (CASE WHEN `{0}` <= CurDate() - 4 THEN Votes ELSE 0 END) as sum4,
-    (CASE WHEN `{0}` <= CurDate() - 5 THEN Votes ELSE 0 END) as sum5,
-    (CASE WHEN `{0}` <= CurDate() - 6 THEN Votes ELSE 0 END) as sum6,
-    (CASE WHEN `{0}` <= CurDate() - 7 THEN Votes ELSE 0 END) as sum7
+    (CASE WHEN `{0}` <= CurDate() - 0 THEN Votes ELSE 0 END) as sum1,
+    (CASE WHEN `{0}` <= CurDate() - 1 THEN Votes ELSE 0 END) as sum2,
+    (CASE WHEN `{0}` <= CurDate() - 2 THEN Votes ELSE 0 END) as sum3,
+    (CASE WHEN `{0}` <= CurDate() - 3 THEN Votes ELSE 0 END) as sum4,
+    (CASE WHEN `{0}` <= CurDate() - 4 THEN Votes ELSE 0 END) as sum5,
+    (CASE WHEN `{0}` <= CurDate() - 5 THEN Votes ELSE 0 END) as sum6,
+    (CASE WHEN `{0}` <= CurDate() - 6 THEN Votes ELSE 0 END) as sum7
     from {1}
     ) as t
     """

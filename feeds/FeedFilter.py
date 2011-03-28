@@ -2,21 +2,7 @@ from spambayes import mboxutils
 from spambayes import hammie
 from eipi2.feeds.models import Story
 import urllib2
-def test():
-    msg =      """From god@heaven.af.mil Sat Jan  3 01:05:34 1996
-               Return-Path: <god@heaven.af.mil>
-               Delivered-To: djb@silverton.berkeley.edu
-               Date: 3 Jan 1996 01:05:34 -0000
-               From: a@b.com
-               To: djb@silverton.berkeley.edu (D. J. Bernstein)
-
-               How's that mail system project coming along?
-               
-               """
-    msg = "test"
-    h = hammie.open('/tmp/hammieTemp', 'dbm', 'c')           
-    h.train(msg, True)
-    print(h.score(msg,True))
+import simplejson
     
 class feedFilter:
     hammieFile = '/home/eipi/webapps/django/eipi2/eipi2/hammieData'
@@ -35,8 +21,18 @@ class feedFilter:
         self.h.store()
 
     def train_internal(self, story):
-        req = urllib2.Request(story.Url)
+        url = story.Url
         opener = urllib2.build_opener()
+
+        # This could be a pointer to the reddit story, in which case we'd
+        # like to parse the data from the actual page, not reddit
+        if "reddit.com" in url:
+            redreq = urllib2.Request(url + ".json")
+            data = opener.open(redreq)
+            json_data = simplejson.load(data)
+            url = json_data[0]['data']['children'][0]['data']['url']
+            
+        req = urllib2.Request(url)
         f = opener.open(req)
         html = f.read()
         clean = str([x for x in html if (x in range(128))])
