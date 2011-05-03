@@ -9,6 +9,7 @@ from datetime import timedelta
 from eipi2.feeds.models import Story, Source
 from django.utils.html import strip_tags
 from eipi2.feeds.FeedFilter import feedFilter
+from urllib2 import HTTPError
 
 # Gets all the stories from the defined feeds table
 class addFeeds:

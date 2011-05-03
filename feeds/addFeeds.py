@@ -20,13 +20,15 @@ class addFeeds:
             addFeeds.addXmlFeed(feedUrl, category, filter)
         elif (feedUrl.endswith('.json')):
             addFeeds.addJsonFeed(feedUrl, category, filter)
-        
+
+    #adds a single XML (RSS) feed
     @staticmethod    
     def addXmlFeed(feedUrl, category, filter): 
         feed = feedparser.parse(feedUrl) 
         numAdded = 0
         map(lambda x: addFeeds.singleXml(x, filter, category, feedUrl), feed['entries'])
 
+    #Parses a single RSS entry
     @staticmethod
     def singleXml(entry, filter, category, feedUrl):
         href = entry.links[0].href
@@ -76,11 +78,13 @@ class addFeeds:
             filter.Train(story)
 
             
-            
+    # Main action. Loops through the db to add all relevant feeds
+    # Doesn't add stuff more frequently than once ever 5 min to prevent
+    # runaway daemons
     @staticmethod
     def addAllFeeds():
         #addFeeds.retrain()
-        waitTime = timedelta(minutes = 0) #5)
+        waitTime = timedelta(minutes = 5)
         for src in Source.objects.filter(LastGet__lt = (datetime.datetime.now() - waitTime)):
             if src == None:
                 break
@@ -90,16 +94,20 @@ class addFeeds:
         #h = feedFilter()
         #h.Train()    
 
+    # Retrains the bayesian filter on all the data
     @staticmethod
     def retrain():
         h = feedFilter()
         h.TrainAll()
 
+    # Updates the actual urls of reddit stories (i.e. the urls of
+    # the story itself, rather than the reddit page)
     @staticmethod
     def add_actual_urls():
         stories = Story.objects.all().filter(Url__contains = 'reddit.com', ActualUrl__exact = None)
         map(addFeeds.add_single, stories)
-        
+
+    # Updates the actual url for one story
     @staticmethod        
     def add_single(story):
         story.ActualUrl = addFeeds.actual_url(story.Url)
