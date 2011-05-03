@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+<link rel="stylesheet" href="../static/css/redmond/jquery-ui-1.8.6.custom.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../static/css/eipi.main.css" type="text/css" media="screen" />
+        
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js" type="text/javascript">
+</script>
+<script src="../static/js/jquery-ui-1.8.6.custom.min.js" type="text/javascript">
+</script>
+
+    <title>Recent stuff about Peta</title>
+</head>
+
+    <body>
+        <div id="loading_display_holder">
+            <div id="loading_display">
+            	<img src="/static/css/images/ajax-loader.gif" alt="loading"/>
+                <span class="loadingText">Loading...</span>
+            </div>
+        </div>
+	
+	{% autoescape off %}
+	<ul id="storyHolder">
+	{% for story in stories %}
+	<li>{{story}}</li>
+	{% endfor %}
+	</ul>
+	{% endautoescape %}
+<script type="text/javascript">
+$(document).ajaxStart(function() {
+$('#loading_display_holder').slideDown("fast");
+});
+
+
+$(document).ajaxStop(function() {
+$('#loading_display_holder').slideUp("fast");
+});
+</script>
+    </body>
+</html>

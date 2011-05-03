@@ -1,0 +1,19 @@
+
+def utils:
+    @staticmethod
+    def int_to_base64(x):
+        this_digit = x % 64
+
+    @staticmethod
+    def encode_digit(x):
+        if x == 63:
+            return '-'
+        elif x == 62:
+            return '_'
+        elif x >= 51:   # 51-61 -> 0-9
+            return str(x-51)
+        elif x >= 25:   # 25-50 -> A-Z
+            return chr(x + 40)
+        else:           # 0-24  -> a-z
+            return chr(x + 97)
+        
