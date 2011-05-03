@@ -4,10 +4,12 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 from eipi2 import UserAnalytics
 import UserAnalytics.views
+import feeds
+from feeds.rss import *
 
 # django cron
-import django_cron
-django_cron.autodiscover()
+#import django_cron
+#django_cron.autodiscover()
 
 admin.autodiscover()
 
@@ -34,7 +36,11 @@ urlpatterns = patterns('',
     (r'^feeds/petaData$', 'feeds.views.peta_data'),
     (r'^feeds/addComments$', 'feeds.views.add_comments_view'),
     (r'^(?P<comment_id>\d+)/votepeta$', 'feeds.views.vote_peta'),
-    
+    (r'^feeds/petasmall', 'feeds.views.peta_small'),
+    (r'^feeds/(?P<keyword>\w+)/vegfeed', PetaFeed()),
+    (r'^feeds/add_actual_urls', 'feeds.views.add_actual_urls'),
+    (r'^feeds/(?P<subsite>\w+)/(?P<id>\w+)/gt.js', 'feeds.views.gen_tracker'),
+                       
     (r'^useranalytics/(?P<user_id>\d+)/update$', 'UserAnalytics.views.update'),
     (r'^useranalytics/$', 'UserAnalytics.views.index'),
     (r'^useranalytics/(?P<user_id>\d+)/storydata$', 'UserAnalytics.views.storyData'),
@@ -47,8 +53,8 @@ urlpatterns = patterns('',
     (r'^useranalytics/(?P<user_id>\d+)/graphaggregation$', 'UserAnalytics.views.graph_data'),
     (r'^useranalytics/(?P<user_id>\d+)/xp$', 'UserAnalytics.views.xp'),
 
-    (r'^gina/$','gina.views.index'),
-    (r'^gina/data$','gina.views.data')    
+#    (r'^gina/$','gina.views.index'),
+#    (r'^gina/data$','gina.views.data')    
     
     # This auto-maps 
     #*map(

@@ -10,6 +10,7 @@ class Story(models.Model):
     Ups = models.IntegerField(null = True)
     Downs = models.IntegerField(null = True)
     VoteUp = models.NullBooleanField()
+    ActualUrl = models.URLField(null = True)
     
     def __unicode__(self):
         return self.title
@@ -29,6 +30,14 @@ class Comment(models.Model):
     KeyWord = models.TextField()
     Story = models.ForeignKey('Story', null = True)
     Valid = models.NullBooleanField()
+    OnReddit = models.NullBooleanField()
+
+class Tracker(models.Model):
+    Id = models.CharField(max_length = 4, db_index = True, null = True)
+    RootUrl = models.URLField(db_index = True)
+    IntId = models.AutoField(primary_key = True)
+    
+
 '''
 class Error(models.Model):
     Date = models.DateTimeField()

@@ -21,6 +21,8 @@ type="text/javascript">
 
 #storyHolder li {
   margin-bottom: 5px;
+  max-height: 2.5em;
+  overflow: hidden;
 }
 
 #storyHolder li:hover {
@@ -32,14 +34,16 @@ type="text/javascript">
   height: 15px;
   display: inline-block;
   vertical-align: middle;
+  background-repeat: no-repeat;
 }
 
 #storyHolder .thumbsUp {
   background-image: url('/static/graphics/Silk_arrow_up.png');
+  background-position: -2px;
 }
 
 #storyHolder .thumbsDown {
-  background-image: url('/static/graphics/251px_Descento.svg.png');
+  background-image: url('/static/graphics/Red_down.png');
 }
 
 #storyHolder a {
@@ -78,7 +82,6 @@ $(document).ready(function(){
   $.get('recentstorydata', function(data){
     var $storyHolder = $('#storyHolder');
     $storyHolder.css('visibility', 'hidden');
-    var icon = '<div class="arrowUp">&nbsp;</div>';
     for(var idx in data){
       $storyHolder.append('<li>' + data[idx] + '</li>');
     }

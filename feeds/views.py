@@ -1,5 +1,5 @@
 from django.template import Context, loader
-from eipi2.feeds.models import Story, Comment
+from eipi2.feeds.models import Story, Comment, Tracker
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core import serializers
@@ -16,13 +16,40 @@ import urllib2
 from django.core.paginator import Paginator
 from eipi2.feeds.add_comments import add_comments
 from eipi2.feeds.story_table import story_table
+from eipi2.feeds.utils import utils
 
-# Create your views here.
+def gen_tracker(request,id, subsite):
+    url = 'http://www.reddit.com/r/' + subsite + '/comments/' + id
+    track, created = Tracker.objects.get_or_create(RootUrl = url)
+    if created:
+        track.save()
+        track.Id = utils.int_to_base64(track.IntId)
+        track.save()
+    return render_to_response('feeds/gentrack.js', {'id' : track.Id})
+    '''    
+    r = HttpResponse(mimetype='application/json')
+    r.write(simplejson.dumps(track.Id))
+    return r
+    '''
+def add_actual_urls(request):
+    addFeeds.add_actual_urls()
+    r = HttpResponse(mimetype='application/json')
+    r.write(simplejson.dumps(True))
+    return r
+    
 def index(request):
     return render_to_response('feeds/index.html', {})
 
 def peta(request):
     return render_to_response('feeds/peta.html', {})
+
+def peta_small(request):
+    type = request.GET.get('type')
+    if type != 'vegan':
+        type = 'peta'
+    data = Comment.objects.filter(KeyWord__exact = type).order_by('Date').reverse()[0:10]
+    stories = map(lambda x: '<a href="' + x.Url + '" title="' + x.Content + '">' + x.Content[0:100] + '</a>', data)
+    return render_to_response('feeds/peta_small.html', {'stories': stories})
 
 def storyList(request):
     rows = int(request.GET.get('rows'))
@@ -51,7 +78,7 @@ def peta_data(request):
         sort_by = 'Date'
     elif (sort_by == 'Votes'):
         sort_by = 'Ups'
-    stories = Comment.objects.all().order_by(sort_by).reverse()
+    stories = Comment.objects.all().filter(KeyWord__exact = 'peta').order_by(sort_by).reverse()
     if (request.GET.get('sord') == 'desc'):
         stories = stories.reverse()
     paginator = Paginator(stories, rows)

@@ -25,21 +25,30 @@ class add_comments:
                 'Content': strip_tags(comment_data['content']),
                 'Date': comment_data['date'],
                 'Valid': False,
-                'KeyWord': keyword
+                'KeyWord': keyword,
+                'OnReddit': False
                 })
-            comment.save()
+
             if "www.reddit.com" in url:
-                #id = add_comments.add_story(url)
-                #comment.Story_id = id
-                #comment.save()
-                pass
+                comment.OnReddit = True
+                try:
+                    id = add_comments.add_story(url)
+                    comment.Story_id = id
+                except:
+                    pass
+            
+            comment.save()
 
     @staticmethod
     def add_comments():
-        add_comments.add_json_comments('http://api.backtype.com/comments/search.json?q=peta&key=81a8e4dcfc0af5d3781f','peta') 
+        add_comments.add_json_comments('http://api.backtype.com/comments/search.json?q=peta&key=81a8e4dcfc0af5d3781f','peta')
+        add_comments.add_json_comments('http://api.backtype.com/comments/search.json?q=vegan&key=81a8e4dcfc0af5d3781f','vegan')
+        add_comments.add_json_comments('http://api.backtype.com/comments/search.json?q=vegetarian&key=81a8e4dcfc0af5d3781f','vegetarian')        
+        
 
     @staticmethod
     def add_story(url):
+        url = url[:url.rfind('/')]
         req = urllib2.Request(url + ".json")
         opener = urllib2.build_opener()
         f = opener.open(req)

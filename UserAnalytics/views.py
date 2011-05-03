@@ -75,10 +75,15 @@ def commentData(request, user_id):
 
 def storyAggregation(request, user_id):
     currentUser = get_object_or_404(SiteUser, pk = user_id)
+    sort_by = request.GET.get('sidx')
+    if sort_by == '':
+        sort_by = 'Votes__count'
     aggregate_data = SubmittedLink.objects.values('SubSite__Name').annotate(
                                             Avg('Votes'), Count('Votes'), Avg('Comments')
-                                        )        
-    
+                                        ).order_by(sort_by)
+    if request.GET.get('sord') == 'desc':
+        aggregate_data = aggregate_data.reverse()
+        
     r = HttpResponse(mimetype='application/json')
     r.write(simplejson.dumps(StoryUtils.StoryTable(aggregate_data)))
     return r        

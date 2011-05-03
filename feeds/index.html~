@@ -43,10 +43,11 @@ type="text/javascript">
             </div>
         </div>
 
+	<div style="width:95%">
         <table id="storyHolder">
 	  <tr><td>test</td></tr>
         </table>
-
+	</div>
         <div id="pager">
         </div>
         <br />
@@ -57,7 +58,7 @@ $(document).ready(function(){
     $("#storyHolder").jqGrid({ 
         url:'storyList',
         datatype: "json", 
-        height: 500, 
+        height: 400, 
         colNames:['Date', 'Category', 'Title', 'Valid', 'Vote Up', 'Score', 'Votes'], 
         colModel:[ 
                     {name:'Date',index:'AddedTime', width:40, sorttype:"date"}, 
@@ -71,6 +72,8 @@ $(document).ready(function(){
         multiselect: false, 
         caption: "Stories",
         pager:'#pager',
+	shrinkToFit: true,
+	autowidth: true,
         gridComplete: function(){
             //$('input.turnIntoCheckbox').checkbox()
         }//,

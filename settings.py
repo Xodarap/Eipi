@@ -98,3 +98,5 @@ EMAIL_HOST_USER = 'eipi'
 EMAIL_HOST_PASSWORD = 'vegANdoit2011'
 DEFAULT_FROM_EMAIL = 'xodarap00@gmail.com'
 SERVER_EMAIL = 'xodarap00@gmail.com'
+
+CRON_POLLING_FREQUENCY = 60

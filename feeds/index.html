@@ -51,14 +51,12 @@ type="text/javascript">
         <div id="pager">
         </div>
         <br />
-        <a href="javascript:;" onclick="eipi.update()" id=
-        "updateButton">Update</a> 
 <script type="text/javascript">
 $(document).ready(function(){
     $("#storyHolder").jqGrid({ 
         url:'storyList',
         datatype: "json", 
-        height: 500, 
+        height: 350, 
         colNames:['Date', 'Category', 'Title', 'Valid', 'Vote Up', 'Score', 'Votes'], 
         colModel:[ 
                     {name:'Date',index:'AddedTime', width:40, sorttype:"date"}, 

@@ -31,9 +31,9 @@ eipi.Comments.prototype = {
 	        colNames:['Sub Site', 'Count', 'Avg Votes', '{{extra_column}}'], 
 	        colModel:[ 
 	                    {name:'SubSite__Name',index:'Sub Site', width:150, sortable:true}, 
-	                    {name:'Votes__count',index:'Count', width:100, sortable:true, sorttype:'numeric'}, 
-	                    {name:'Votes__avg', index:'Avg Votes', width:100, sortable:true},
-	                    {name:'Comments__avg',index:'Avg Comments', width:100, sortable:true},
+	                    {name:'Votes__count',index:'Votes__count', width:100, sortable:true, sorttype:'numeric'}, 
+	                    {name:'Votes__avg', index:'Votes__avg', width:100, sortable:true, sorttype:'numeric'},
+	                    {name:'Comments__avg',index:'Comments__avg', width:100, sortable:true, sorttype:'numeric'},
 	                ], 
 	        multiselect: false, 
 	        caption: '{{ title }}',
